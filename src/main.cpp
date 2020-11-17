@@ -5,10 +5,9 @@
    Description: Simple robot
 */
 
-//#include <Servo.h>
+#include <Servo.h>
 #include <Arduino.h>
 #include <LiquidCrystal.h>
-#include <IRremote.h>
 
 #define ULTRASONIC_SENSOR_ECHO_DETECT_PIN 8
 #define ULTRASONIC_SENSOR_TRIGGER_PIN 9
@@ -25,10 +24,7 @@
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
-// Servo servo;
-
-IRrecv irrecv(IR_RECEIVER_PIN);
-decode_results results;
+Servo servo;
 
 inline void writeLCDDoubleLine(String line1, String line2) {
   lcd.begin(16, 2);
@@ -82,7 +78,7 @@ inline void buzzer_tune_2() {
   tone(PASSIVE_BUZZER_PIN, 800, 100);
   delay(100);
 }
-/*
+
 inline void reset_servo(Servo& servo) {
   servo.write(90);
 }
@@ -91,7 +87,7 @@ inline void wave_servo_left(Servo& servo) {
   servo.write(0);
   delay(400);
   servo.write(90);
-}*/
+}
 
 void setup()
 {
@@ -100,40 +96,19 @@ void setup()
 
   pinMode(ULTRASONIC_SENSOR_ECHO_DETECT_PIN, INPUT);
 
-  /*servo.attach(SERVO_PIN);
+  servo.attach(SERVO_PIN);
 
   reset_servo(servo);
 
-  servo.write(90);*/
+  servo.write(90);
 
-  irrecv.enableIRIn();
+  // irrecv.enableIRIn();
 }
 
 void loop()
 {
   Serial.println("loop");
   
-  if (irrecv.decode(&results)) {
-    writeLCDDoubleLine(String(String("C: ") + String(results.value)), String(String("Bits: ") + String(results.bits)));
-    switch(results.value) {
-      case 16724175:
-        writeLCDDoubleLine(String("1"), String(""));
-        break;
-      default:          
-        writeLCDDoubleLine(String(String("C: ") + String(results.value)), String(String("Bits: ") + String(results.bits)));
-          break;
-    }
-
-    Serial.print("C: ");
-    Serial.print(results.value, HEX);
-    Serial.print(", Bits: ");
-    Serial.println(results.bits);
-    
-    irrecv.resume();
-  }
-  
-  delay(600);
-
   const unsigned long cm_from_ultrasonic_sensor = get_cm_from_sensor();
   if (cm_from_ultrasonic_sensor <= SENSOR_DISTANCE_WAY_FAR_AWAY) {
     Serial.print("sensor: distance is ");
@@ -147,7 +122,7 @@ void loop()
     else if (cm_from_ultrasonic_sensor <= SENSOR_DISTANCE_IN_RANGE)
     {
       writeLCDDoubleLine("Audrey & Charlie", String(String(cm_from_ultrasonic_sensor/2.54) + "in away"));
-/*
+
       wave_servo_left(servo);
 
       standard_delay();
@@ -161,11 +136,10 @@ void loop()
       buzzer_tune_2();
 
       standard_delay();
-      */
     } else {
       writeLCDDoubleLine("where did", "they go");
 
-      // reset_servo(servo);
+      reset_servo(servo);
     }
     
   }
