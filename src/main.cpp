@@ -22,9 +22,73 @@
 #define SENSOR_DISTANCE_IN_RANGE 30
 #define SENSOR_DISTANCE_WAY_FAR_AWAY 1000
 
+const int c = 261;
+const int d = 294;
+const int e = 329;
+const int f = 349;
+const int g = 391;
+const int gS = 415;
+const int a = 440;
+const int aS = 455;
+const int b = 466;
+const int cH = 523;
+const int cSH = 554;
+const int dH = 587;
+const int dSH = 622;
+const int eH = 659;
+const int fH = 698;
+const int fSH = 740;
+const int gH = 784;
+const int gSH = 830;
+const int aH = 880;
+ 
+const int buzzerPin = PASSIVE_BUZZER_PIN;
+ 
+int counter = 0;
+
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 Servo servo;
+
+
+inline void reset_servo(Servo& servo) {
+  servo.write(90);
+}
+
+inline void wave_servo_left(Servo& servo) {
+  servo.write(0);
+}
+
+inline void wave_servo_right(Servo& servo) {
+  servo.write(90);
+}
+
+void beep(int note, int duration)
+{
+ //Play tone on buzzerPin
+  tone(buzzerPin, note, duration);
+ 
+  //Play different LED depending on value of 'counter'
+  if(counter % 2 == 0)
+  {
+    wave_servo_left(servo);
+
+    delay(duration);
+  }else
+  {
+    wave_servo_right(servo);
+
+    delay(duration);
+  }
+ 
+  //Stop tone on buzzerPin
+  noTone(buzzerPin);
+ 
+  delay(50);
+ 
+  //Increment counter
+  counter++;
+}
 
 inline void writeLCDDoubleLine(String line1, String line2) {
   lcd.begin(16, 2);
@@ -49,49 +113,74 @@ inline unsigned long get_cm_from_sensor() {
   return int(duration / 2 / 29.412);
 }
 
-inline void buzzer_tune_1() {
-  tone(PASSIVE_BUZZER_PIN, 400, 100);
-  delay(100);
-  tone(PASSIVE_BUZZER_PIN, 800, 100);
-  delay(100);
-  tone(PASSIVE_BUZZER_PIN, 200, 100);
-  delay(100);
-  tone(PASSIVE_BUZZER_PIN, 400, 50);
-  delay(50);
-  tone(PASSIVE_BUZZER_PIN, 400, 50);
-  delay(50);
-  tone(PASSIVE_BUZZER_PIN, 400, 50);
-  delay(50);
+inline void play_star_wars() {
+  beep(a, 500);
+  beep(a, 500);    
+  beep(a, 500);
+  beep(f, 350);
+  beep(cH, 150);  
+  beep(a, 500);
+  beep(f, 350);
+  beep(cH, 150);
+  beep(a, 650);
+
+  delay(500);
+
+  beep(eH, 500);
+  beep(eH, 500);
+  beep(eH, 500);  
+  beep(fH, 350);
+  beep(cH, 150);
+  beep(gS, 500);
+  beep(f, 350);
+  beep(cH, 150);
+  beep(a, 650);
+
+  delay(500);
+
+  beep(aH, 500);
+  beep(a, 300);
+  beep(a, 150);
+  beep(aH, 500);
+  beep(gSH, 325);
+  beep(gH, 175);
+  beep(fSH, 125);
+  beep(fH, 125);    
+  beep(fSH, 250);
+
+  delay(325);
+
+  beep(aS, 250);
+  beep(dSH, 500);
+  beep(dH, 325);  
+  beep(cSH, 175);  
+  beep(cH, 125);  
+  beep(b, 125);  
+  beep(cH, 250);  
+
+  delay(350);
+
+  beep(f, 250);  
+  beep(gS, 500);  
+  beep(f, 375);  
+  beep(cH, 125);
+  beep(a, 500);  
+  beep(f, 375);  
+  beep(cH, 125);
+  beep(a, 650);  
+
+  delay(650);
+
+ 
+
 }
 
-inline void buzzer_tune_2() {
-  tone(PASSIVE_BUZZER_PIN, 100, 100);
-  delay(100);
-  tone(PASSIVE_BUZZER_PIN, 200, 100);
-  delay(100);
-  tone(PASSIVE_BUZZER_PIN, 200, 100);
-  delay(100);
-  tone(PASSIVE_BUZZER_PIN, 400, 50);
-  delay(50);
-  tone(PASSIVE_BUZZER_PIN, 400, 50);
-  delay(50);
-  tone(PASSIVE_BUZZER_PIN, 800, 100);
-  delay(100);
-}
-
-inline void reset_servo(Servo& servo) {
-  servo.write(90);
-}
-
-inline void wave_servo_left(Servo& servo) {
-  servo.write(0);
-  delay(400);
-  servo.write(90);
-}
 
 void setup()
 {
   Serial.begin(9600); // Serial connection with baudrate 960
+  pinMode(buzzerPin, OUTPUT);
+
   pinMode(ULTRASONIC_SENSOR_TRIGGER_PIN, OUTPUT);
 
   pinMode(ULTRASONIC_SENSOR_ECHO_DETECT_PIN, INPUT);
@@ -123,21 +212,10 @@ void loop()
     {
       writeLCDDoubleLine("Audrey & Charlie", String(String(cm_from_ultrasonic_sensor/2.54) + "in away"));
 
-      wave_servo_left(servo);
+      play_star_wars();
 
-      standard_delay();
-
-      wave_servo_left(servo);
-
-      buzzer_tune_1();
-
-      standard_delay();
-
-      buzzer_tune_2();
-
-      standard_delay();
     } else {
-      writeLCDDoubleLine("where did", "they go");
+      writeLCDDoubleLine("Robo Jukebox", "Select a Song");
 
       reset_servo(servo);
     }
