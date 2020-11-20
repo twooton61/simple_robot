@@ -11,14 +11,29 @@
 
 /* servo */
 const uint8_t SERVO_PIN = 10;
-inline void reset_servo(Servo& servo);
-inline void wave_servo_left(Servo& servo);
-inline void wave_servo_right(Servo& servo);
+
+inline void reset_servo(Servo& servo) {
+  servo.write(90);
+}
+
+inline void wave_servo_left(Servo& servo) {
+  servo.write(0);
+}
+
+inline void wave_servo_right(Servo& servo) {
+  servo.write(90);
+}
+
 Servo servo;
 
 /* lcd */
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-inline void writeLCDDoubleLine(String line1, String line2);
+inline void writeLCDDoubleLine(String line1, String line2) {
+  lcd.begin(16, 2);
+  lcd.print(line1);
+  lcd.setCursor(0, 1);
+  lcd.print(line2);
+}
 
 /* setup ultrasonic sensor */
 const uint8_t ULTRASONIC_SENSOR_ECHO_DETECT_PIN = 8;
@@ -27,7 +42,18 @@ const uint8_t SENSOR_STOP_SIGNAL = 0;
 const uint8_t SENSOR_SEND_SIGNAL = 1;
 const unsigned int SENSOR_DISTANCE_IN_RANGE = 30;
 const unsigned int SENSOR_DISTANCE_WAY_FAR_AWAY = 1000;
-inline unsigned long get_cm_from_sensor();
+
+inline unsigned long get_cm_from_sensor() {
+  digitalWrite(ULTRASONIC_SENSOR_TRIGGER_PIN, SENSOR_STOP_SIGNAL);
+  delayMicroseconds(2);
+  digitalWrite(ULTRASONIC_SENSOR_TRIGGER_PIN, SENSOR_SEND_SIGNAL);
+  delayMicroseconds(10);
+  digitalWrite(ULTRASONIC_SENSOR_TRIGGER_PIN, SENSOR_STOP_SIGNAL);
+
+  const unsigned long duration = pulseIn(ULTRASONIC_SENSOR_ECHO_DETECT_PIN, HIGH);
+
+  return int(duration / 2 / 29.412);
+}
 
 /* buzzer */
 const uint8_t PASSIVE_BUZZER_PIN = 6;
@@ -55,66 +81,6 @@ namespace buzzer_note {
   const int aH = 880;
 }
 
-inline void play_buzzer_note(const int buzzer_note, const int duration);
-inline void play_star_wars();
-
-void setup()
-{
-  Serial.begin(9600);
-
-  pinMode(PASSIVE_BUZZER_PIN, OUTPUT);
-
-  pinMode(ULTRASONIC_SENSOR_TRIGGER_PIN, OUTPUT);
-
-  pinMode(ULTRASONIC_SENSOR_ECHO_DETECT_PIN, INPUT);
-
-  servo.attach(SERVO_PIN);
-
-  reset_servo(servo);
-}
-
-void loop()
-{
-  Serial.println("loop");
-
-  const unsigned long cm_from_ultrasonic_sensor = get_cm_from_sensor();
-  if (cm_from_ultrasonic_sensor <= SENSOR_DISTANCE_WAY_FAR_AWAY) {
-    Serial.print("sensor: distance is ");
-    Serial.print(cm_from_ultrasonic_sensor);
-    Serial.print("cm comparing to ");
-    Serial.print(SENSOR_DISTANCE_IN_RANGE);
-    Serial.println("cm");
-    if (cm_from_ultrasonic_sensor == 0) {
-      Serial.println("sensor error, reading 0 distance");
-    }
-    else if (cm_from_ultrasonic_sensor <= SENSOR_DISTANCE_IN_RANGE)
-    {
-      writeLCDDoubleLine("Motion Detected", String(String(cm_from_ultrasonic_sensor/2.54) + "in away"));
-
-      play_star_wars();
-
-    } else {
-      writeLCDDoubleLine("Hello!", "How are you?");
-
-      reset_servo(servo);
-    }
-  }
-
-  delay(1000);
-}
-
-inline void reset_servo(Servo& servo) {
-  servo.write(90);
-}
-
-inline void wave_servo_left(Servo& servo) {
-  servo.write(0);
-}
-
-inline void wave_servo_right(Servo& servo) {
-  servo.write(90);
-}
-
 inline void play_buzzer_note(const int buzzer_note, const int duration)
 {
   static int note_count = 0;
@@ -137,25 +103,6 @@ inline void play_buzzer_note(const int buzzer_note, const int duration)
   delay(50);
 
   note_count++;
-}
-
-inline void writeLCDDoubleLine(String line1, String line2) {
-  lcd.begin(16, 2);
-  lcd.print(line1);
-  lcd.setCursor(0, 1);
-  lcd.print(line2);
-}
-
-inline unsigned long get_cm_from_sensor() {
-  digitalWrite(ULTRASONIC_SENSOR_TRIGGER_PIN, SENSOR_STOP_SIGNAL);
-  delayMicroseconds(2);
-  digitalWrite(ULTRASONIC_SENSOR_TRIGGER_PIN, SENSOR_SEND_SIGNAL);
-  delayMicroseconds(10);
-  digitalWrite(ULTRASONIC_SENSOR_TRIGGER_PIN, SENSOR_STOP_SIGNAL);
-
-  const unsigned long duration = pulseIn(ULTRASONIC_SENSOR_ECHO_DETECT_PIN, HIGH);
-
-  return int(duration / 2 / 29.412);
 }
 
 inline void play_star_wars() {
@@ -215,4 +162,53 @@ inline void play_star_wars() {
   play_buzzer_note(buzzer_note::a, 650);
 
   delay(650);
+}
+
+void setup()
+{
+  Serial.begin(9600);
+
+  pinMode(PASSIVE_BUZZER_PIN, OUTPUT);
+
+  pinMode(ULTRASONIC_SENSOR_TRIGGER_PIN, OUTPUT);
+
+  pinMode(ULTRASONIC_SENSOR_ECHO_DETECT_PIN, INPUT);
+
+  servo.attach(SERVO_PIN);
+
+  reset_servo(servo);
+}
+
+void loop()
+{
+  Serial.println("loop");
+
+  const unsigned long cm_from_ultrasonic_sensor = get_cm_from_sensor();
+  if (cm_from_ultrasonic_sensor <= SENSOR_DISTANCE_WAY_FAR_AWAY) {
+    Serial.print("sensor: distance is ");
+    Serial.print(cm_from_ultrasonic_sensor);
+    Serial.print("cm comparing to ");
+    Serial.print(SENSOR_DISTANCE_IN_RANGE);
+    Serial.println("cm");
+    if (cm_from_ultrasonic_sensor == 0) {
+      Serial.println("sensor error, reading 0 distance");
+    }
+    else if (cm_from_ultrasonic_sensor <= SENSOR_DISTANCE_IN_RANGE)
+    {
+      writeLCDDoubleLine("Motion Detected", String(String(cm_from_ultrasonic_sensor/2.54) + "in away"));
+
+      delay(3000);
+
+      writeLCDDoubleLine("Playing", "Star Wars");
+
+      play_star_wars();
+
+    } else {
+      writeLCDDoubleLine("Hello! Wave", "for a song");
+
+      reset_servo(servo);
+    }
+  }
+
+  delay(1000);
 }
