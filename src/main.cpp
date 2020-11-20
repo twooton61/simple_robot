@@ -9,18 +9,19 @@
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 
-#define ULTRASONIC_SENSOR_ECHO_DETECT_PIN 8
-#define ULTRASONIC_SENSOR_TRIGGER_PIN 9
-#define IR_RECEIVER_PIN 7
-#define PASSIVE_BUZZER_PIN 6
-#define SERVO_PIN 10
+const uint8_t ULTRASONIC_SENSOR_ECHO_DETECT_PIN = 8;
+const uint8_t ULTRASONIC_SENSOR_TRIGGER_PIN = 9;
+const uint8_t IR_RECEIVER_PIN = 7;
+const uint8_t PASSIVE_BUZZER_PIN = 6;
+const uint8_t SERVO_PIN = 10;
 
-#define SENSOR_STOP_SIGNAL 0
-#define SENSOR_SEND_SIGNAL 1
-#define BUZZER_ON HIGH
-#define BUZZER_OFF LOW
-#define SENSOR_DISTANCE_IN_RANGE 30
-#define SENSOR_DISTANCE_WAY_FAR_AWAY 1000
+const uint8_t SENSOR_STOP_SIGNAL = 0;
+const uint8_t SENSOR_SEND_SIGNAL = 1;
+const uint8_t BUZZER_ON = HIGH;
+const uint8_t BUZZER_OFF = LOW;
+
+const unsigned int SENSOR_DISTANCE_IN_RANGE = 30;
+const unsigned int SENSOR_DISTANCE_WAY_FAR_AWAY = 1000;
 
 const int c = 261;
 const int d = 294;
@@ -41,9 +42,6 @@ const int fSH = 740;
 const int gH = 784;
 const int gSH = 830;
 const int aH = 880;
- 
-const int BUZZER_PIN = PASSIVE_BUZZER_PIN;
- 
 int counter = 0;
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
@@ -65,28 +63,25 @@ inline void wave_servo_right(Servo& servo) {
 
 void beep(int note, int duration)
 {
- //Play tone on BUZZER_PIN
-  tone(BUZZER_PIN, note, duration);
+  tone(PASSIVE_BUZZER_PIN, note, duration);
  
-  //Play different LED depending on value of 'counter'
   if(counter % 2 == 0)
   {
     wave_servo_left(servo);
 
-    delay(duration);
   }else
   {
     wave_servo_right(servo);
 
-    delay(duration);
   }
+
+  delay(duration);
+
  
-  //Stop tone on BUZZER_PIN
-  noTone(BUZZER_PIN);
+  noTone(PASSIVE_BUZZER_PIN);
  
   delay(50);
  
-  //Increment counter
   counter++;
 }
 
@@ -180,7 +175,7 @@ void setup()
 {
   Serial.begin(9600);
 
-  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(PASSIVE_BUZZER_PIN, OUTPUT);
 
   pinMode(ULTRASONIC_SENSOR_TRIGGER_PIN, OUTPUT);
 
