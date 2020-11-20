@@ -71,8 +71,6 @@ void setup()
   servo.attach(SERVO_PIN);
 
   reset_servo(servo);
-
-  servo.write(90);
 }
 
 void loop()
