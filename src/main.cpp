@@ -9,6 +9,7 @@
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 
+
 const uint8_t ULTRASONIC_SENSOR_ECHO_DETECT_PIN = 8;
 const uint8_t ULTRASONIC_SENSOR_TRIGGER_PIN = 9;
 const uint8_t IR_RECEIVER_PIN = 7;
@@ -23,31 +24,27 @@ const uint8_t BUZZER_OFF = LOW;
 const unsigned int SENSOR_DISTANCE_IN_RANGE = 30;
 const unsigned int SENSOR_DISTANCE_WAY_FAR_AWAY = 1000;
 
-const int c = 261;
-const int d = 294;
-const int e = 329;
-const int f = 349;
-const int g = 391;
-const int gS = 415;
-const int a = 440;
-const int aS = 455;
-const int b = 466;
-const int cH = 523;
-const int cSH = 554;
-const int dH = 587;
-const int dSH = 622;
-const int eH = 659;
-const int fH = 698;
-const int fSH = 740;
-const int gH = 784;
-const int gSH = 830;
-const int aH = 880;
-int counter = 0;
-
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-
-Servo servo;
-
+namespace buzzer_note {
+  const int c = 261;
+  const int d = 294;
+  const int e = 329;
+  const int f = 349;
+  const int g = 391;
+  const int gS = 415;
+  const int a = 440;
+  const int aS = 455;
+  const int b = 466;
+  const int cH = 523;
+  const int cSH = 554;
+  const int dH = 587;
+  const int dSH = 622;
+  const int eH = 659;
+  const int fH = 698;
+  const int fSH = 740;
+  const int gH = 784;
+  const int gSH = 830;
+  const int aH = 880;
+}
 
 inline void reset_servo(Servo& servo) {
   servo.write(90);
@@ -61,28 +58,33 @@ inline void wave_servo_right(Servo& servo) {
   servo.write(90);
 }
 
-void beep(int note, int duration)
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+Servo servo;
+
+inline void play_buzzer_note(const int buzzer_note, const int duration)
 {
-  tone(PASSIVE_BUZZER_PIN, note, duration);
- 
-  if(counter % 2 == 0)
+  static int note_count = 0;
+
+  tone(PASSIVE_BUZZER_PIN, buzzer_note, duration);
+
+  if(note_count % 2 == 0)
   {
     wave_servo_left(servo);
-
-  }else
+  }
+  else
   {
     wave_servo_right(servo);
-
   }
 
   delay(duration);
 
- 
   noTone(PASSIVE_BUZZER_PIN);
- 
+
   delay(50);
- 
-  counter++;
+
+  note_count++;
 }
 
 inline void writeLCDDoubleLine(String line1, String line2) {
@@ -90,10 +92,6 @@ inline void writeLCDDoubleLine(String line1, String line2) {
   lcd.print(line1);
   lcd.setCursor(0, 1);
   lcd.print(line2);
-}
-
-inline void standard_delay() {
-  delay(400);
 }
 
 inline unsigned long get_cm_from_sensor() {
@@ -109,67 +107,63 @@ inline unsigned long get_cm_from_sensor() {
 }
 
 inline void play_star_wars() {
-  beep(a, 500);
-  beep(a, 500);    
-  beep(a, 500);
-  beep(f, 350);
-  beep(cH, 150);  
-  beep(a, 500);
-  beep(f, 350);
-  beep(cH, 150);
-  beep(a, 650);
+  play_buzzer_note(buzzer_note::a, 500);
+  play_buzzer_note(buzzer_note::a, 500);
+  play_buzzer_note(buzzer_note::a, 500);
+  play_buzzer_note(buzzer_note::f, 350);
+  play_buzzer_note(buzzer_note::cH, 150);
+  play_buzzer_note(buzzer_note::a, 500);
+  play_buzzer_note(buzzer_note::f, 350);
+  play_buzzer_note(buzzer_note::cH, 150);
+  play_buzzer_note(buzzer_note::a, 650);
 
   delay(500);
 
-  beep(eH, 500);
-  beep(eH, 500);
-  beep(eH, 500);  
-  beep(fH, 350);
-  beep(cH, 150);
-  beep(gS, 500);
-  beep(f, 350);
-  beep(cH, 150);
-  beep(a, 650);
+  play_buzzer_note(buzzer_note::eH, 500);
+  play_buzzer_note(buzzer_note::eH, 500);
+  play_buzzer_note(buzzer_note::eH, 500);
+  play_buzzer_note(buzzer_note::fH, 350);
+  play_buzzer_note(buzzer_note::cH, 150);
+  play_buzzer_note(buzzer_note::gS, 500);
+  play_buzzer_note(buzzer_note::f, 350);
+  play_buzzer_note(buzzer_note::cH, 150);
+  play_buzzer_note(buzzer_note::a, 650);
 
   delay(500);
 
-  beep(aH, 500);
-  beep(a, 300);
-  beep(a, 150);
-  beep(aH, 500);
-  beep(gSH, 325);
-  beep(gH, 175);
-  beep(fSH, 125);
-  beep(fH, 125);    
-  beep(fSH, 250);
+  play_buzzer_note(buzzer_note::aH, 500);
+  play_buzzer_note(buzzer_note::a, 300);
+  play_buzzer_note(buzzer_note::a, 150);
+  play_buzzer_note(buzzer_note::aH, 500);
+  play_buzzer_note(buzzer_note::gSH, 325);
+  play_buzzer_note(buzzer_note::gH, 175);
+  play_buzzer_note(buzzer_note::fSH, 125);
+  play_buzzer_note(buzzer_note::fH, 125);
+  play_buzzer_note(buzzer_note::fSH, 250);
 
   delay(325);
 
-  beep(aS, 250);
-  beep(dSH, 500);
-  beep(dH, 325);  
-  beep(cSH, 175);  
-  beep(cH, 125);  
-  beep(b, 125);  
-  beep(cH, 250);  
+  play_buzzer_note(buzzer_note::aS, 250);
+  play_buzzer_note(buzzer_note::dSH, 500);
+  play_buzzer_note(buzzer_note::dH, 325);
+  play_buzzer_note(buzzer_note::cSH, 175);
+  play_buzzer_note(buzzer_note::cH, 125);
+  play_buzzer_note(buzzer_note::b, 125);
+  play_buzzer_note(buzzer_note::cH, 250);
 
   delay(350);
 
-  beep(f, 250);  
-  beep(gS, 500);  
-  beep(f, 375);  
-  beep(cH, 125);
-  beep(a, 500);  
-  beep(f, 375);  
-  beep(cH, 125);
-  beep(a, 650);  
+  play_buzzer_note(buzzer_note::f, 250);
+  play_buzzer_note(buzzer_note::gS, 500);
+  play_buzzer_note(buzzer_note::f, 375);
+  play_buzzer_note(buzzer_note::cH, 125);
+  play_buzzer_note(buzzer_note::a, 500);
+  play_buzzer_note(buzzer_note::f, 375);
+  play_buzzer_note(buzzer_note::cH, 125);
+  play_buzzer_note(buzzer_note::a, 650);
 
   delay(650);
-
- 
-
 }
-
 
 void setup()
 {
@@ -191,7 +185,7 @@ void setup()
 void loop()
 {
   Serial.println("loop");
-  
+
   const unsigned long cm_from_ultrasonic_sensor = get_cm_from_sensor();
   if (cm_from_ultrasonic_sensor <= SENSOR_DISTANCE_WAY_FAR_AWAY) {
     Serial.print("sensor: distance is ");
@@ -204,16 +198,15 @@ void loop()
     }
     else if (cm_from_ultrasonic_sensor <= SENSOR_DISTANCE_IN_RANGE)
     {
-      writeLCDDoubleLine("Audrey & Charlie", String(String(cm_from_ultrasonic_sensor/2.54) + "in away"));
+      writeLCDDoubleLine("Motion Detected", String(String(cm_from_ultrasonic_sensor/2.54) + "in away"));
 
       play_star_wars();
 
     } else {
-      writeLCDDoubleLine("Robo Jukebox", "Select a Song");
+      writeLCDDoubleLine("Hello!", "How are you?");
 
       reset_servo(servo);
     }
-    
   }
 
   delay(1000);
