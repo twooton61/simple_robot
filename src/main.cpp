@@ -2,7 +2,7 @@
    Server Robot
    Author: twooton
    Email: tcwooton@gmail.com
-   Description: Simple robot
+   Description: Simple Robot
 */
 
 #include <Servo.h>
@@ -42,7 +42,7 @@ const int gH = 784;
 const int gSH = 830;
 const int aH = 880;
  
-const int buzzerPin = PASSIVE_BUZZER_PIN;
+const int BUZZER_PIN = PASSIVE_BUZZER_PIN;
  
 int counter = 0;
 
@@ -65,8 +65,8 @@ inline void wave_servo_right(Servo& servo) {
 
 void beep(int note, int duration)
 {
- //Play tone on buzzerPin
-  tone(buzzerPin, note, duration);
+ //Play tone on BUZZER_PIN
+  tone(BUZZER_PIN, note, duration);
  
   //Play different LED depending on value of 'counter'
   if(counter % 2 == 0)
@@ -81,8 +81,8 @@ void beep(int note, int duration)
     delay(duration);
   }
  
-  //Stop tone on buzzerPin
-  noTone(buzzerPin);
+  //Stop tone on BUZZER_PIN
+  noTone(BUZZER_PIN);
  
   delay(50);
  
@@ -178,8 +178,9 @@ inline void play_star_wars() {
 
 void setup()
 {
-  Serial.begin(9600); // Serial connection with baudrate 960
-  pinMode(buzzerPin, OUTPUT);
+  Serial.begin(9600);
+
+  pinMode(BUZZER_PIN, OUTPUT);
 
   pinMode(ULTRASONIC_SENSOR_TRIGGER_PIN, OUTPUT);
 
@@ -190,8 +191,6 @@ void setup()
   reset_servo(servo);
 
   servo.write(90);
-
-  // irrecv.enableIRIn();
 }
 
 void loop()
