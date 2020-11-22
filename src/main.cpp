@@ -8,10 +8,10 @@
 #include <Servo.h>
 #include <Arduino.h>
 #include <LiquidCrystal.h>
-#include "RoboServo.h"
-#include "RoboLCD.h"
-#include "RoboDancer.h"
-#include "RoboUltrasonicSensor.h"
+#include <RoboServo.h>
+#include <RoboLCD.h>
+#include <RoboDancer.h>
+#include <RoboUltrasonicSensor.h>
 
 
 const int SERVO_PIN = 10;
@@ -65,7 +65,7 @@ void loop()
       robo_dancer.play_star_wars(main_robo_servo);
 
     } else {
-      robo_lcd.write_double_line("robot don't take", "no shit");
+      robo_lcd.write_double_line("Hello, wave for", "a song");
 
       main_robo_servo.reset();
     }
