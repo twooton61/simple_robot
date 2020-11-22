@@ -2,8 +2,10 @@
 #define ROBO_ULTRASONIC_SENSOR_H
 
 #include <Arduino.h>
+#include <AbstractRoboPart.h>
+#include <RoboBrain.h>
 
-class RoboUltrasonicSensor {
+class RoboUltrasonicSensor : AbstractRoboPart {
   static const int STOP_SIGNAL = 0;
   static const int SEND_SIGNAL = 1;
 
@@ -11,11 +13,11 @@ class RoboUltrasonicSensor {
   const int m_sensor_trigger_pin;
 
   public:
-  RoboUltrasonicSensor(const int sensor_echo_detect_pin, const int sensor_trigger_pin) :
+  RoboUltrasonicSensor(RoboBrain& robo_brain, const int sensor_echo_detect_pin, const int sensor_trigger_pin) :
     m_sensor_echo_detect_pin(sensor_echo_detect_pin),
     m_sensor_trigger_pin(sensor_trigger_pin)
   {
-
+      robo_brain.add_part(this);
   }
 
   inline void setup() {

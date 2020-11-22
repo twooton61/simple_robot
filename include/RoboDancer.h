@@ -2,10 +2,12 @@
 #define RoboDancer_H
 
 #include <Arduino.h>
-#include "RoboServo.h"
-#include "BuzzerNote.h"
+#include <RoboBrain.h>
+#include <AbstractRoboPart.h>
+#include <RoboServo.h>
+#include <BuzzerNote.h>
 
-class RoboDancer {
+class RoboDancer : AbstractRoboPart {
   static const int BUZZER_ON = HIGH;
   static const int BUZZER_OFF = LOW;
 
@@ -15,14 +17,14 @@ class RoboDancer {
 
   public:
 
-  RoboDancer(RoboServo& servo, const int buzzer_pin) :
+  RoboDancer(RoboBrain& robo_brain, RoboServo& servo, const int buzzer_pin) :
     m_servo(servo),
     m_passive_buzzer_pin(buzzer_pin)
   {
-
+    robo_brain.add_part(this);
   }
 
-  inline void setup() {
+  void setup() {
       pinMode(m_passive_buzzer_pin, OUTPUT);
   }
 

@@ -7,18 +7,22 @@
 
 #include <Arduino.h>
 #include <Helpers.h>
+#include <RoboBrain.h>
 #include <RoboServo.h>
 #include <RoboLCD.h>
 #include <RoboDancer.h>
 #include <RoboUltrasonicSensor.h>
 
-RoboServo main_robo_servo(DIGITAL_IO_PIN(10));
+RoboBrain robo_brain;
 
-RoboDancer robo_dancer(main_robo_servo, DIGITAL_IO_PIN(6));
+RoboServo main_robo_servo(robo_brain, DIGITAL_IO_PIN(10));
 
-RoboUltrasonicSensor robo_ultrasonice_sensor(DIGITAL_IO_PIN(8), DIGITAL_IO_PIN(9));
+RoboDancer robo_dancer(robo_brain, main_robo_servo, DIGITAL_IO_PIN(6));
+
+RoboUltrasonicSensor robo_ultrasonice_sensor(robo_brain, DIGITAL_IO_PIN(8), DIGITAL_IO_PIN(9));
 
 RoboLCD robo_lcd(
+  robo_brain,
   DIGITAL_IO_PIN(12),
   DIGITAL_IO_PIN(11),
   DIGITAL_IO_PIN(5),
@@ -31,9 +35,7 @@ void setup()
 {
   Serial.begin(9600);
 
-  main_robo_servo.setup();
-  robo_dancer.setup();
-  robo_ultrasonice_sensor.setup();
+  robo_brain.setup();
 }
 
 void loop()
