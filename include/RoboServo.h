@@ -2,6 +2,7 @@
 #define ROBO_SERVO_H
 
 #include <Arduino.h>
+#include <Servo.h>
 
 class RoboServo {
   const int m_pin = 0;

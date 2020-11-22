@@ -1,6 +1,8 @@
 #ifndef ROBO_LCD_H
 #define ROBO_LCD_H
 
+#include <LiquidCrystal.h>
+
 class RoboLCD {
   LiquidCrystal m_lcd;
 
