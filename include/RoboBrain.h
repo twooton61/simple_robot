@@ -6,21 +6,21 @@
 class RoboBrain {
     class AbstractRoboPartNode {
         AbstractRoboPart* m_robo_part;
-        AbstractRoboPartNode* m_next;
+        AbstractRoboPartNode* m_next_node;
 
         public:
         AbstractRoboPartNode(AbstractRoboPart* robo_part) :
             m_robo_part(robo_part),
-            m_next(NULL)
+            m_next_node(NULL)
         {
         }
 
-        inline void set_next_node(AbstractRoboPartNode* next) {
-            m_next = next;
+        inline void set_next_node(AbstractRoboPartNode* next_node) {
+            m_next_node = next_node;
         }
 
         inline AbstractRoboPartNode* get_next_node() {
-            return m_next;
+            return m_next_node;
         }
 
         inline AbstractRoboPart* get_robo_part() {
@@ -54,10 +54,8 @@ class RoboBrain {
     void setup() {
         AbstractRoboPartNode* current_node = m_first_part_added_node;
         while(current_node != NULL) {
-
             Serial.println("setting up robo part");
             current_node->get_robo_part()->setup();
-
             current_node = current_node->get_next_node();
         }
     }
