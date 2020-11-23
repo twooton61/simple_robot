@@ -20,7 +20,7 @@ class RoboUltrasonicSensor : AbstractRoboPart {
       robo_brain.add_part(this);
   }
 
-  inline void setup() {
+  inline void setup() override {
     pinMode(m_sensor_echo_detect_pin, INPUT);
 
     pinMode(m_sensor_trigger_pin, OUTPUT);

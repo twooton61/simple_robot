@@ -11,7 +11,8 @@ class RoboBrain {
 
     public:
 
-    RoboBrain() {
+    RoboBrain()
+    {
     }
 
     void add_part(AbstractRoboPart* robo_part) {

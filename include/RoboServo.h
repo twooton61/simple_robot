@@ -17,7 +17,7 @@ class RoboServo : AbstractRoboPart {
     robo_brain.add_part(this);
   }
 
-  inline void setup() {
+  inline void setup() override {
     m_servo.attach(m_pin);
 
     reset();

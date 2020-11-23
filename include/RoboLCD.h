@@ -16,7 +16,7 @@ class RoboLCD : AbstractRoboPart {
     robo_brain.add_part(this);
   }
 
-  inline void setup() {
+  inline void setup() override {
   }
 
   inline void write_double_line(String line1, String line2) {

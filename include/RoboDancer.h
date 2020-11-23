@@ -24,7 +24,7 @@ class RoboDancer : AbstractRoboPart {
     robo_brain.add_part(this);
   }
 
-  void setup() {
+  inline void setup() override {
       pinMode(m_passive_buzzer_pin, OUTPUT);
   }
 
