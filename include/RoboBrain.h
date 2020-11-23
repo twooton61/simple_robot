@@ -4,30 +4,61 @@
 #include <AbstractRoboPart.h>
 
 class RoboBrain {
-    static const int MAX_PARTS = 100;
+    class AbstractRoboPartNode {
+        AbstractRoboPart* m_robo_part;
+        AbstractRoboPartNode* m_next;
 
-    AbstractRoboPart* m_robo_parts[MAX_PARTS];
-    int m_total_parts = 0;
+        public:
+        AbstractRoboPartNode(AbstractRoboPart* robo_part) :
+            m_robo_part(robo_part),
+            m_next(NULL)
+        {
+        }
+
+        inline void set_next_node(AbstractRoboPartNode* next) {
+            m_next = next;
+        }
+
+        inline AbstractRoboPartNode* get_next_node() {
+            return m_next;
+        }
+
+        inline AbstractRoboPart* get_robo_part() {
+            return m_robo_part;
+        }
+    };
+
+    AbstractRoboPartNode* m_first_part_added_node = NULL;
+    AbstractRoboPartNode* m_last_part_added_node = NULL;
 
     public:
 
-    RoboBrain()
+    RoboBrain() :
+        m_last_part_added_node(NULL)
     {
     }
 
     void add_part(AbstractRoboPart* robo_part) {
-        if(m_total_parts == MAX_PARTS) {
-            Serial.println("too many parts");
-            return;
-        }
+        AbstractRoboPartNode* new_part_node = new AbstractRoboPartNode(robo_part);
 
-        m_robo_parts[m_total_parts++] = robo_part;
+        if(m_first_part_added_node == NULL) {
+            m_first_part_added_node = new_part_node;
+            m_last_part_added_node = new_part_node;
+        }
+        else {
+            m_last_part_added_node->set_next_node(new_part_node);
+            m_last_part_added_node = new_part_node;
+        }
     }
 
     void setup() {
-        for(int i = 0; i < m_total_parts; i++) {
-            AbstractRoboPart* arp = m_robo_parts[i];
-            arp->setup();
+        AbstractRoboPartNode* current_node = m_first_part_added_node;
+        while(current_node != NULL) {
+
+            Serial.println("setting up robo part");
+            current_node->get_robo_part()->setup();
+
+            current_node = current_node->get_next_node();
         }
     }
 };
